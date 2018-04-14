@@ -119,9 +119,12 @@ def draw_win_numbers(db_cur, term_id):
                     p2_count += 1
             else:
                 row[10] = 'NO'
-            num = row[2], row[3], row[4], row[5], row[6], row[7]
-            db_cur.execute("UPDATE LOTTERY SET RESULT=?, BONUS=? WHERE LOTTERY_ID=?", (row[10], row[11], lotteries[2]))
             print(row, match_numbers, match_count)
+            num = row[10], row[11], row[3], row[4], row[5], row[6], row[7], row[8], row[1]
+            db_cur.execute("""UPDATE LOTTERY SET RESULT=?, BONUS=? WHERE NUM1=? AND NUM2=? AND NUM3=? 
+                AND NUM4=? AND NUM5=? AND NUM6=? AND CUSTOMER_ID=?""", 
+                (num))
+        conn.commit()
         # 計算頭獎及二獎平均分配獎金 
         p1_avg = 0
         p2_avg = 0
