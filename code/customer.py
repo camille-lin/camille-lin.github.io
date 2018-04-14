@@ -4,7 +4,7 @@ from random import randint, sample
 #連接資料庫
 conn = sqlite3.connect('lottery.db')
 cur = conn.cursor()
-lottery_numbers = list(range(1, 50))
+lottery_numbers = list(range(1, 19))
 def show_menu():
     pct = '◎' * 18
     print('''
@@ -79,7 +79,7 @@ def buy_lotteries(db_cur):
 
         # 模擬其他顧客購買彩券
         # 其他顧客人數
-        other_people = randint(1, 15)
+        other_people = randint(5, 15)
         for i in range(other_people):
             other_lottery = randint(1, 5)
             # 模擬產生顧客編號

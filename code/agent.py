@@ -29,6 +29,7 @@ def get_lottery_list(db_cur, term_id=0):
     if term_id == 0:
         db_cur.execute("SELECT * FROM LOTTERY")
     else:
+        # db_cur.execute("SELECT * FROM LOTTERY WHERE TERM=?", (term_id,))
         db_cur.execute("SELECT * FROM LOTTERY WHERE TERM=?", (term_id,))
     return db_cur.fetchall()
 
@@ -96,9 +97,8 @@ def draw_win_numbers(db_cur, term_id):
     """ 本期開獎及計算獎金 
     """
     # 開獎及對獎
-    win_num = set(sample(list(range(1, 50)), 6))
+    win_num = set(sample(list(range(1, 19)), 6))
     print(win_num)
-    # win_num = {24, 40, 14, 47, 26, 46}
     prize_types = ('P4', 'P3', 'P2', 'P1')
     # 頭獎及二獎獎金
     p1_bonus, p2_bonus = get_prize_top_two(db_cur, term_id)
@@ -119,11 +119,9 @@ def draw_win_numbers(db_cur, term_id):
                     p2_count += 1
             else:
                 row[10] = 'NO'
-            print(row, match_numbers, match_count)
-            num = row[10], row[11], row[3], row[4], row[5], row[6], row[7], row[8], row[1]
-            db_cur.execute("""UPDATE LOTTERY SET RESULT=?, BONUS=? WHERE NUM1=? AND NUM2=? AND NUM3=? 
-                AND NUM4=? AND NUM5=? AND NUM6=? AND CUSTOMER_ID=?""", 
-                (num))
+            # 彩券兌獎結果
+            # print(row, match_numbers, match_count)
+            db_cur.execute("""UPDATE LOTTERY SET RESULT=? WHERE LOTTERY_ID=?""", (row[10], row[2]))
         conn.commit()
         # 計算頭獎及二獎平均分配獎金 
         p1_avg = 0
@@ -138,10 +136,13 @@ def draw_win_numbers(db_cur, term_id):
             if row[10] != 'NO':
                 row[11] = tup_bonus[int(row[10][1])-1]
             win_num = list(win_num)
-            # 執行有問題
-            db_cur.execute("UPDATE TERM SET NUM1=?, NUM2=?, NUM3=?, NUM4=?, NUM5=?, NUM6=? WHERE TERM=?", (win_num[0], win_num[1], win_num[2], win_num[3], win_num[4], win_num[5], term_id))
-            # TODO 更新到資料庫 => UPDATE SQL
-            print(row)
+            db_cur.execute("""UPDATE LOTTERY SET BONUS=? WHERE LOTTERY_ID=?""", (row[11], row[2]))
+            # 有中獎再顯示
+            if row[10] != 'NO':
+                print(row)
+        # 執行有問題
+        db_cur.execute("UPDATE TERM SET NUM1=?, NUM2=?, NUM3=?, NUM4=?, NUM5=?, NUM6=? WHERE TERM=?", (win_num[0], win_num[1], win_num[2], win_num[3], win_num[4], win_num[5], term_id))
+        # TODO 更新到資料庫 => UPDATE SQL
     else:
         print('The table is empty.')
 
