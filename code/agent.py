@@ -8,7 +8,7 @@ cur = conn.cursor()
 def show_menu():
     divider = '+ '*25
     menu = '''1. 銷售統計 (依期別/人數/張數/收入/利潤排序)
-2. 單期銷售 (輸入期別或最新一期) ***已完整    
+2. 單期銷售 (輸入期別或最新一期)    
 3. 兌獎查詢 (輸入期別或最新一期)
 4. 本期開獎
 e. 離開'''
@@ -163,7 +163,7 @@ def draw_win_numbers(db_cur, term_id):
                 db_cur.execute("UPDATE TERM SET P4_WS=?, P4_BS=? WHERE TERM = ?", (t[1], t[2], 1))
 
     # 新增下期預設資料
-    # cur.execute("INSERT INTO TERM VALUES(term_id+1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)")
+    cur.execute("INSERT INTO TERM VALUES(?, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)", (term_id+1, ))
     conn.commit()
 while True:
     show_menu() 
