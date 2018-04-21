@@ -47,11 +47,13 @@ def insert_random_lottery(db_cur, lottery, term, customer_id):
 
 def buy_lotteries(db_cur):
     while True:
+        lottery = input('How many lotteries (quit)? ').lower()
+        
         # 查詢目前為止最新期別
         db_cur.execute("SELECT MAX(TERM) FROM TERM")
         term = db_cur.fetchone()[0]
-        
-        lottery = input('How many lotteries (quit)? ').lower()
+        print(term)
+
         if lottery == 'quit':
             break
         q1 = int(input('1.電腦選號 2.自己選號'))

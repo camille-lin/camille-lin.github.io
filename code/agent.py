@@ -140,27 +140,29 @@ def draw_win_numbers(db_cur, term_id):
             # 有中獎再顯示
             if row[10] != 'NO':
                 print(row)
-        # 執行有問題
-        db_cur.execute("UPDATE TERM SET NUM1=?, NUM2=?, NUM3=?, NUM4=?, NUM5=?, NUM6=? WHERE TERM=?", (win_num[0], win_num[1], win_num[2], win_num[3], win_num[4], win_num[5], term_id))
+        
+        db_cur.execute("UPDATE TERM SET NUM1=?, NUM2=?, NUM3=?, NUM4=?, NUM5=?, NUM6=? WHERE TERM=?", 
+            (win_num[0], win_num[1], win_num[2], win_num[3], win_num[4], win_num[5], term_id))
         # TODO 更新到資料庫 => UPDATE SQL
     else:
         print('The table is empty.')
 
     # 更新本期中獎人數及獎金
-    db_cur.execute("SELECT RESULT, COUNT(*), SUM(BONUS) FROM LOTTERY WHERE TERM=? AND RESULT<>'NO' GROUP BY RESULT", (1, ))
+    db_cur.execute("SELECT RESULT, COUNT(*), SUM(BONUS) FROM LOTTERY WHERE TERM=? AND RESULT<>'NO' GROUP BY RESULT", (term_id, ))
     terms = db_cur.fetchall()
     if len(terms) > 0:
         for t in terms:
             t = list(t)
             print(t)
+            term_bonus = (t[1], t[2], term_id)
             if t[0] == 'P1':
-                db_cur.execute("UPDATE TERM SET P1_WS=?, P1_BS=? WHERE TERM = ?", (t[1], t[2], 1))
+                db_cur.execute("UPDATE TERM SET P1_WS=?, P1_BS=? WHERE TERM=?", term_bonus)
             elif t[0] == 'P2':
-                db_cur.execute("UPDATE TERM SET P2_WS=?, P2_BS=? WHERE TERM = ?", (t[1], t[2], 1))
+                db_cur.execute("UPDATE TERM SET P2_WS=?, P2_BS=? WHERE TERM=?", term_bonus)
             elif t[0] == 'P3':
-                db_cur.execute("UPDATE TERM SET P3_WS=?, P3_BS=? WHERE TERM = ?", (t[1], t[2], 1))
+                db_cur.execute("UPDATE TERM SET P3_WS=?, P3_BS=? WHERE TERM=?", term_bonus)
             elif t[0] == 'P4':
-                db_cur.execute("UPDATE TERM SET P4_WS=?, P4_BS=? WHERE TERM = ?", (t[1], t[2], 1))
+                db_cur.execute("UPDATE TERM SET P4_WS=?, P4_BS=? WHERE TERM=?", term_bonus)
 
     # 新增下期預設資料
     cur.execute("INSERT INTO TERM VALUES(?, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)", (term_id+1, ))
