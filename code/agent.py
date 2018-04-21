@@ -55,19 +55,16 @@ def show_term_list(db_cur):
     else:
         print('The table is empty.')
 
-def lotteries_summary(db_cur, sort_by):
+def lotteries_summary(db_cur, sort_by, is_desc):
     """ 銷售統計 (依期別/人數/張數/收入/利潤排序)
     """
-    # GROUP BY TERM, CUSTOMER_ID 以期別、顧客編號為群組區分計算張數
-    # TODO 針對使用 list or tuple 排序的範例請在教材中搜尋 pairs
-    db_cur.execute("SELECT * FROM TERM")   
-    count_tickets = db_cur.fetchall()
-    if sort_by == 1:
-        # 將資料以 tuple 儲存並放在 list
-        print(count_tickets)
-        for t in count_tickets:
-            print(t)
-        print()
+    db_cur.execute("""SELECT TERM, CUSTOMERS, TICKETS, REVENUES, (REVENUES-P1_BS-P2_BS-P3_BS-P4_BS) AS PROFIT,
+        P1_WS, P1_BS, P2_WS, P2_BS, P3_WS, P3_BS, P4_WS, P4_BS FROM TERM """)
+    term_stat = db_cur.fetchall()[:-1]
+    term_stat.sort(key=lambda ts: ts[sort_by-1], reverse=is_desc)
+    for ts in term_stat:
+        print(ts)
+    print()    
 
 def update_term_data(db_cur, term_id):
     """ 更新本期人數、張數、收入
@@ -130,7 +127,7 @@ def draw_win_numbers(db_cur, term_id):
         if p2_count != 0:
             p2_avg = int(p2_bonus / p2_count)
         # 分配獎金
-        tup_bonus = (p1_avg, p2_avg, 2000, 200)
+        tup_bonus = (p1_avg, p2_avg, 100, 20)
         for row in lotteries:
             if row[10] != 'NO':
                 row[11] = tup_bonus[int(row[10][1])-1]
@@ -139,10 +136,10 @@ def draw_win_numbers(db_cur, term_id):
             # 有中獎再顯示
             if row[10] != 'NO':
                 print(row)
-        
+
+        # 更新到資料庫 => UPDATE SQL
         db_cur.execute("UPDATE TERM SET NUM1=?, NUM2=?, NUM3=?, NUM4=?, NUM5=?, NUM6=? WHERE TERM=?", 
             (win_num[0], win_num[1], win_num[2], win_num[3], win_num[4], win_num[5], term_id))
-        # TODO 更新到資料庫 => UPDATE SQL
     else:
         print('The table is empty.')
 
@@ -171,15 +168,12 @@ while True:
     main_opt = input('>> ').lower()
     max_term_id = get_max_term_id(cur)
     if main_opt == '1':
-        # 銷售統計
-        # 期別 人數 張數 收入 利潤
-        #    1    4    7  350  150
-        #    2    7    7  350  150
         print('銷售統計')
-        opt = int(input('1.期別 2.人數 3.張數 4.收入 5.利潤排序'))
-        if opt in range(1, 6):
+        opt1 = int(input('1.期別 2.人數 3.張數 4.收入 5.利潤排序:'))
+        opt2 = input('a.由高到低(DESC) b.由低到高(ASC):').lower()
+        if opt1 in range(1, 6):
             update_term_data(cur, max_term_id)
-            lotteries_summary(cur, opt)
+            lotteries_summary(cur, opt1, opt2=='a')
 
     elif main_opt == '2':
         print('單期銷售')
