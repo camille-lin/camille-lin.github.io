@@ -185,7 +185,7 @@ while True:
         else:
             qry_term_id = max_term_id
         # 處理查詢
-        if qry_term_id not in range(0, max_term_id+1):
+        if max_term_id is None or qry_term_id not in range(0, max_term_id+1):
             print('期別錯誤')
         elif qry_term_id == 0:
             # 全部銷售明細
