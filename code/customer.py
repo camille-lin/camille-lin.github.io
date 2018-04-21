@@ -25,12 +25,14 @@ def show_menu():
 def select_prize(db_cur):
     db_cur.execute("SELECT MAX(TERM) FROM TERM")
     new_term = db_cur.fetchone()[0]
-    term = input('搜尋哪一期?(n表示最新一期)')
+    term = input('搜尋哪一期 (n 表示最新開獎期別)?')
     if term == 'n':
-        term = new_term
-    db_cur.execute("""SELECT RESULT<>'NO' FROM LOTTERY WHERE CUSTOMER_ID = ?, TERM = ?"""(1, term))
-    prize = db_cur.fatchall()
-    print(prize)
+        # 最新開獎期別與目前期別差一期
+        term = new_term-1
+    db_cur.execute("SELECT * FROM LOTTERY WHERE TERM=? AND CUSTOMER_ID=? AND RESULT<>'NO' ", (term, 1))
+    prize = db_cur.fetchall()
+    for p in prize:
+        print(p)
     
 def insert_random_lottery(db_cur, lottery, term, customer_id):
     for i in range(lottery):
@@ -48,11 +50,10 @@ def insert_random_lottery(db_cur, lottery, term, customer_id):
 def buy_lotteries(db_cur):
     while True:
         lottery = input('How many lotteries (quit)? ').lower()
-        
+
         # 查詢目前為止最新期別
         db_cur.execute("SELECT MAX(TERM) FROM TERM")
         term = db_cur.fetchone()[0]
-        print(term)
 
         if lottery == 'quit':
             break

@@ -29,7 +29,6 @@ def get_lottery_list(db_cur, term_id=0):
     if term_id == 0:
         db_cur.execute("SELECT * FROM LOTTERY")
     else:
-        # db_cur.execute("SELECT * FROM LOTTERY WHERE TERM=?", (term_id,))
         db_cur.execute("SELECT * FROM LOTTERY WHERE TERM=?", (term_id,))
     return db_cur.fetchall()
 
