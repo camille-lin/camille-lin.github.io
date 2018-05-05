@@ -14,3 +14,13 @@ pre code {
 .text-header {
     color: #0010cf;
 }
+
+.table-schema tr td:nth-child(1) {
+    width: 30%;
+}
+.table-schema tr td:nth-child(2) {
+    width: 20%;
+}
+.table-schema tr td:nth-child(3) {
+    width: 50%;
+}
