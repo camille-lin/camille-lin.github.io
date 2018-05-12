@@ -1,19 +1,23 @@
+import os
+import sqlite3
+from random import randint, sample
+#連接資料庫
+conn = sqlite3.connect('lottery.db')
+cur = conn.cursor()
+
 class Customer():
-    import os
-    import sqlite3
-    from random import randint, sample
-    #連接資料庫
-    conn = sqlite3.connect('lottery.db')
-    cur = conn.cursor()
-    lottery_numbers = list(range(1, 19))
-    def show_menu():
+    
+    def __init__(self):
+        self.lottery_numbers = list(range(1, 19))
+
+    def show_menu(self):
         pct = '◎' * 18
         print('''
-        {}
-        1. 購買大樂透
-        2. 中獎查詢
-        e. 離開       
-        {}
+ {}
+ 1. 購買大樂透
+ 2. 中獎查詢
+ e. 離開       
+ {}
         '''.format(pct, pct))
     # 1. 購買大樂透
     #     1. 自己選號
@@ -23,7 +27,7 @@ class Customer():
     #     2. 中獎查詢(全部或中獎)
     # e. 離開 
 
-    def select_prize(db_cur):
+    def select_prize(self, db_cur):
         db_cur.execute("SELECT MAX(TERM) FROM TERM")
         new_term = db_cur.fetchone()[0]
         term = input('搜尋哪一期 (n 表示最新開獎期別)?')
@@ -35,20 +39,20 @@ class Customer():
         for p in prize:
             print(p)
         
-    def insert_random_lottery(db_cur, lottery, term, customer_id):
+    def insert_random_lottery(self, db_cur, lottery, term, customer_id):
         for i in range(lottery):
            # 新增彩券
             db_cur.execute("SELECT COUNT(*) FROM LOTTERY WHERE TERM=?", (term,))
             lottery_id = db_cur.fetchone()[0] +1
             row_data = [term, customer_id, lottery_id]
-            row_data.extend(sample(lottery_numbers, 6))
+            row_data.extend(sample(self.lottery_numbers, 6))
             row_data.extend(['R', '', 0])
             print(row_data)
             db_cur.execute("INSERT INTO LOTTERY VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tuple(row_data))
             conn.commit()
         print()
 
-    def buy_lotteries(db_cur):
+    def buy_lotteries(self, db_cur):
         while True:
             lottery = input('How many lotteries (quit)? ').lower()
 
@@ -61,7 +65,7 @@ class Customer():
             q1 = int(input('1.電腦選號 2.自己選號'))
             # 使用者購買彩券
             if q1 == 1:
-                insert_random_lottery(db_cur, int(lottery), term, 1)
+                self.insert_random_lottery(db_cur, int(lottery), term, 1)
             elif q1 == 2:
                 print('第 1 位顧客')
                 for h in range(int(lottery)):
@@ -89,16 +93,18 @@ class Customer():
                 other_lottery = randint(1, 5)
                 # 模擬產生顧客編號
                 customer_id = randint(2, 30)
-                insert_random_lottery(db_cur, other_lottery, term, customer_id)
+                self.insert_random_lottery(db_cur, other_lottery, term, customer_id)
 
+
+csm = Customer()
 while True:
-    show_menu()
+    csm.show_menu()
     opt = input('>>').lower()
     if opt not in ('1', '2', 'e'):
         print('O.O請重新輸入O.O')
     if opt == '1':
-        buy_lotteries(cur)
+        csm.buy_lotteries(cur)
     elif opt == '2':
-        select_prize(cur)
+        csm.select_prize(cur)
     elif opt == 'e':
         break
