@@ -6,25 +6,66 @@ conn = sqlite3.connect('lottery.db')
 cur = conn.cursor()
 
 class Agent():
-
+    max_term_id = get_max_term()
+    def __init__(self):
+        self.lottery_numbers = list(range(1, 19))
+        self.menu_title = '券商'
+        self.account = ''
+        self.menu = {
+            '1':'銷售統計 (依期別/人數/張數/收入/利潤排序)',
+            '2':'單期銷售 (輸入期別或最新一期)',
+            '3':'兌獎查詢 (輸入期別或最新一期)',
+            '4':'本期開獎',
+            'e':'離開'       
+        }
+        self.menu_func = {
+            '1': lambda dbc: self.judgment_sales_statistics(dbc),
+            '2': lambda dbc: self.judgment_single_sale(dbc),
+            '3': lambda dbc: self.show_term_list(dbc),
+            '4': lambda dbc: self.draw_win_numbers(dbc)
+        }
+        self.divider = '='*20
     def show_menu(self):
         divider = '+ '*25
-        menu = ''' 1. 銷售統計 (依期別/人數/張數/收入/利潤排序)
- 2. 單期銷售 (輸入期別或最新一期)    
- 3. 兌獎查詢 (輸入期別或最新一期)
- 4. 本期開獎
- e. 離開'''
+        print(divider)
+        for fid, fname in self.menu.items():
+            print(' %s. %s' % (fid, fname))
+        print(divider)
+        opt = input('請選擇: ').lower()
+        if opt in self.menu.keys():
+            return opt, self.menu[opt]
+        else:
+            return '', 'O.O請重新輸入O.O'
+  
+    def judgment_sales_statistics(self)
+        print('銷售統計')
+        opt1 = int(input('1.期別 2.人數 3.張數 4.收入 5.利潤排序:'))
+        opt2 = input('a.由高到低(DESC) b.由低到高(ASC):').lower()
+        if opt1 in range(1, 6):
+            db.update_term_data(cur, max_term_id)
+            lotteries_summary(cur, opt1, opt2=='a')
 
-        print(divider) 
-        print(menu)
-        print(divider)   
+    def judgment_single_sale(self):
+        max_term_id = db.get_max_term()
+        print('單期銷售')
+        print('目前最新期別:', max_term_id)
+        qry_term_id = input('輸入期別 (0 表示全部，直接 Enter 可查最新一期):')
+        # 設定查詢期別
+        if qry_term_id.isdigit():
+            qry_term_id = int(qry_term_id)
+        else:
+            qry_term_id = max_term_id
+        # 處理查詢
+        if max_term_id is None or qry_term_id not in range(0, max_term_id+1):
+            print('期別錯誤')
+        elif qry_term_id == 0:
+            # 全部銷售明細
+            self.show_lottery_list(cur)
+        else:
+            # 單期銷售明細
+            self.show_lottery_list(cur, qry_term_id)
 
-    def get_max_term_id(self, db_cur):
-        """ 取得最新期別編號 
-        """
-        db_cur.execute("SELECT MAX(TERM) FROM LOTTERY")
-        return db_cur.fetchone()[0]
-        
+
     def get_lottery_list(self, db_cur, term_id=0):
         """ 擷取彩券清單資料
         """
@@ -68,21 +109,6 @@ class Agent():
             print(ts)
         print()    
 
-    def update_term_data(self, db_cur, term_id):
-        """ 更新本期人數、張數、收入
-        """
-        db_cur.execute("SELECT CUSTOMER_ID, COUNT(*) FROM LOTTERY WHERE TERM=? GROUP BY CUSTOMER_ID ", (term_id, ))
-        terms = db_cur.fetchall()
-        customers = len(terms)
-        tickets = 0
-        if customers > 0:
-            for t in terms:
-                tickets = tickets + t[1]
-                # print(t)
-            revenues = tickets * 50
-            db_cur.execute("UPDATE TERM SET CUSTOMERS=?, TICKETS=?, REVENUES=? WHERE TERM=?", 
-                (customers, tickets, revenues, term_id))
-            conn.commit()
 
     def get_prize_top_two(self, db_cur, term_id):
         """ 計算頭獎及二獎獎金
@@ -98,6 +124,7 @@ class Agent():
         """ 本期開獎及計算獎金 
         """
         # 開獎及對獎
+        db.update_term_data(db_cur, term_id)
         win_num = set(sample(list(range(1, 19)), 6))
         print(win_num)
         prize_types = ('P4', 'P3', 'P2', 'P1')
@@ -173,17 +200,6 @@ class Agent():
 
 agent = Agent()        
 while True:
-    agent.show_menu() 
-    main_opt = input('>> ').lower()
-    max_term_id = agent.get_max_term_id(cur)
-    if main_opt == '1':
-        print('銷售統計')
-        opt1 = int(input('1.期別 2.人數 3.張數 4.收入 5.利潤排序:'))
-        opt2 = input('a.由高到低(DESC) b.由低到高(ASC):').lower()
-        if opt1 in range(1, 6):
-            agent.update_term_data(cur, max_term_id)
-            agent.lotteries_summary(cur, opt1, opt2=='a')
-
     elif main_opt == '2':
         print('單期銷售')
         print('目前最新期別:', max_term_id)
@@ -217,3 +233,15 @@ while True:
 
 # 關閉資料庫
 conn.close()
+
+with DB() as db:
+    agent = Agent()        
+    while True:
+        func_id, func_name = agent.show_menu()
+        if func_id == 'e':
+            break
+        elif func_id == '':
+            print(func_name)
+        else:
+            agent.menu_func[func_id](db)
+        print()

@@ -50,3 +50,19 @@ class DB:
     def select_lottery_id(self, term):
         self.cur.execute("SELECT COUNT(*) FROM LOTTERY WHERE TERM=?", (term, ))
         return self.cur.fetchone()[0]
+
+    def update_term_data(self, db_cur, term_id):
+        """ 更新本期人數、張數、收入
+        """
+        db_cur.execute("SELECT CUSTOMER_ID, COUNT(*) FROM LOTTERY WHERE TERM=? GROUP BY CUSTOMER_ID ", (term_id, ))
+        terms = db_cur.fetchall()
+        customers = len(terms)
+        tickets = 0
+        if customers > 0:
+            for t in terms:
+                tickets = tickets + t[1]
+                # print(t)
+            revenues = tickets * 50
+            db_cur.execute("UPDATE TERM SET CUSTOMERS=?, TICKETS=?, REVENUES=? WHERE TERM=?", 
+                (customers, tickets, revenues, term_id))
+            conn.commit()
