@@ -2,7 +2,7 @@
 ---
 
 ## v1.3 (2018-05-26)
-
+* 新增 agent 使用說明
 * 修改 agent.py，將 class Agent 方法中，資料庫相關程式獨立為 class DB 方法
 ---
 
