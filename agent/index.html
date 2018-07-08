@@ -18,50 +18,45 @@
   </head>
 
   <body>
-
     <div class="container">
       <h1 class="text-header">券商功能</h1>
-
       <h2 id="usage">使用說明</h2>
-      <div style="height:600px;">
       <div class="col-md-12">
-            <table class="table">
-                <thead>
-                    <tr class="table-primary">
-                      <th>欄位</th>
-                      <th>項目</th>
-                      <th>功能</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                      <td>銷售統計</td>
-                      <td>期別、人數、張數、利潤</td>
-                      <td>由高到低或由低到高排序</td>
-                    </tr>
-                    <tr>
-                      <td>單期銷售</td>
-                      <td>輸入的期別</td>
-                      <td>列出所有彩券資料</td>
-                    </tr>
-                    <tr>
-                      <td>兌獎查詢</td>
-                      <td>輸入的期別</td>
-                      <td>列出期別資料</td>
-                    </tr>
-                    <tr>
-                      <td>進行開獎</td>
-                      <td>未開獎的彩券</td>
-                      <td>1. 進行開獎
-                          2. 計算、更新到TERM及LOTTERY
-                      </td>
-                    </tr>
-                    
-                </tbody>
-            </table>
-        </div>
+        <table class="table">
+            <thead>
+                <tr class="table-primary">
+                  <th>欄位</th>
+                  <th>項目</th>
+                  <th>功能</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                  <td>銷售統計</td>
+                  <td>期別、人數、張數、利潤</td>
+                  <td>由高到低或由低到高排序</td>
+                </tr>
+                <tr>
+                  <td>單期銷售</td>
+                  <td>輸入的期別</td>
+                  <td>列出所有彩券資料</td>
+                </tr>
+                <tr>
+                  <td>兌獎查詢</td>
+                  <td>輸入的期別</td>
+                  <td>列出期別資料</td>
+                </tr>
+                <tr>
+                  <td>進行開獎</td>
+                  <td>未開獎的彩券</td>
+                  <td>1. 進行開獎
+                      2. 計算、更新到TERM及LOTTERY
+                  </td>
+                </tr>
+                
+            </tbody>
+        </table>
       </div>
-
       <h2 id="pycode">程式碼</h2>
       <pre>
           <code class="python">
@@ -241,9 +236,19 @@
 
       <h2 id="demo">操作示範</h2>
       <div style="height:600px;">
-          <small>操作示範</small>
       </div>
-      
+      <pre>
+          <code class="html">
+           + + + + + + + + + + + + + + + + + + + + + + + + +                   
+           1. 銷售統計 (依期別/人數/張數/收入/利潤排序)                                        
+           2. 單期銷售 (輸入期別或最新一期)                                                
+           3. 兌獎查詢 (輸入期別或最新一期)                                                
+           4. 本期開獎                                                            
+           e. 離開                                                              
+           + + + + + + + + + + + + + + + + + + + + + + + + +                   
+           請選擇:
+          </code>
+      </pre>                                     
     </div>
   
     <!-- Bootstrap core JavaScript -->
