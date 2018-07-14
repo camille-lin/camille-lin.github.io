@@ -7,7 +7,11 @@
     <meta name="author" content="Camille Lin">
     <link rel="icon" href="/static/favicon.ico">
     <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
-
+    <style>
+    h2 {
+        border-left: 5px solid violet;
+    }
+    </style>
     <title>資料庫 - 樂透遊戲</title>
 
     <!-- Bootstrap core CSS -->
@@ -20,7 +24,7 @@
   <body>
 
     <div class="container">
-      <h1 class="text-header">資料庫</h1>
+      <h1 class="text-header" style=color:MediumSeaGreen>資料庫</h1>
 
       <h2 id="pycode">程式碼</h2>
       <pre>
@@ -155,7 +159,7 @@
       </pre>
 
       <h2 id="schema">資料表</h2>
-      <h3>彩券對獎表 <span class="text-primary">LOTTERY</span></h3>
+      <h3 style=color:SlateBlue>彩券對獎表 <span class="text-primary">LOTTERY</span></h3>
         <div class="col-md-12">
             <table class="table table-bordered table-schema">
                 <thead class="thead-light">
@@ -200,6 +204,51 @@
                       <td>BONUS</td>
                       <td>integer</td>
                       <td>獎金</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+      <h3 style=color:SlateBlue>期別開獎表 <span class="text-primary">LOTTERY</span></h3>
+        <div class="col-md-12">
+            <table class="table table-bordered table-schema">
+                <thead class="thead-light">
+                    <tr>
+                      <th>欄位</th>
+                      <th>資料型態</th>
+                      <th>名稱</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                      <td>TERM</td>
+                      <td>integer</td>
+                      <td>期別</td>
+                    </tr>
+                    <tr>
+                      <td>CUSTOMERS</td>
+                      <td>integer</td>
+                      <td>人數</td>
+                    </tr>
+                    <tr>
+                      <td>TICKETS</td>
+                      <td>integer</td>
+                      <td>張數</td>
+                    </tr>
+                    <tr>
+                      <td>REVENUES</td>
+                      <td>integer</td>
+                      <td>收入</td>
+                    </tr>
+                    <tr>
+                      <td>NUM1~6</td>
+                      <td>integer</td>
+                      <td>選號 1~6</td>
+                    </tr>
+                    <tr>
+                      <td>P1_WS~P4_BS</td>
+                      <td>integer</td>
+                      <td>頭獎~肆獎人數, 頭獎~肆獎獎金</td>
                     </tr>
                 </tbody>
             </table>
